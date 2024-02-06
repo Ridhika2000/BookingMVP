@@ -1,0 +1,22 @@
+server:
+  port: 8082
+
+spring: 
+  application:
+    name: HOTEL-SERVICE
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: Hotels
+  activemq:
+    user: admin
+    password: admin
+    broker-url: tcp://localhost:61616?jms.redeliveryPolicy.maximumRedeliveries=1
+        
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka

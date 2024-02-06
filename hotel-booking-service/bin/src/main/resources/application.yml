@@ -1,0 +1,79 @@
+server:
+  port: 8085
+
+
+
+spring:
+  application:
+    name: HOTEL-BOOKING-SERVICE
+  data:
+    mongodb:
+      database: HotelBookings
+      host: bookingservicemongodb
+      port: 27017
+  activemq:
+    user: admin
+    password: admin
+    broker-url: tcp://activemq:61616?jms.redeliveryPolicy.maximumRedeliveries=1
+  
+    
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri:  https://dev-74285990.okta.com/oauth2/default
+      client:
+        registration:
+          my-internal-hotel-booking-client:
+            provider: okta
+            authorization-grant-type: client_credentials
+            scope: internal
+            client-id: 0oa8ut7lbgQQxvHpO5d7
+            client-secret: 918YTMEo_LHq3R7Srj45Y0vYzIuCYx_9nxB_4vMB
+    
+        provider:
+          okta:
+            issuer-uri:   https://dev-74285990.okta.com/oauth2/default
+  
+management:
+  health:
+    circuitbreakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+        
+  endpoint:
+    health:
+      show-details: always
+      
+resilience4j:
+  circuitbreaker:
+    instances:
+      userHotelFallback:
+        registerHealthIndicator: true
+        eventConsumerBufferSize: 10
+        failureRateThreshold: 50
+        minimumNumberOfCalls: 5
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 6s
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowSize: 10
+        slidingWindowType: COUNT_BASED
+            
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://service-registry-springboot-mongodb:8761/eureka
+ 
+okta:
+  oauth2:
+    issuer: https://dev-74285990.okta.com/oauth2/default
+    audience: api://default
+     
